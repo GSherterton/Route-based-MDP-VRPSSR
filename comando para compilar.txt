@@ -1,0 +1,5 @@
+Para compilar
+g++ main.cpp sources/*.cpp -I headers -o VRPSSR 
+
+Para executar
+./VRPSSR ./instances/article.txt
