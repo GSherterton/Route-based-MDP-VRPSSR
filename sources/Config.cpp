@@ -2,7 +2,7 @@
 #include <iostream>
 #include <fstream>
 
-void Config::read_instance(const string instance_name){
+void Config::read_instance(const string& instance_name){
     ifstream fp;
 
     fp.open(instance_name);
@@ -25,6 +25,15 @@ void Config::read_instance(const string instance_name){
         }
     }
 
+    fp >> depot;
+
+    int n;
+    fp >> n;//quantity of customers
+    customers.resize(n);
+    for(int i = 0; i < n; i++){
+        fp >> customers[i];
+    }
+
     fp.close();
 }
 
@@ -42,7 +51,7 @@ void Config::fill_adj_matrix(){
     }
 }
 
-Config::Config(const string instance_name){
+Config::Config(const string& instance_name, const int& decision_epoch_horizon){
     read_instance(instance_name);
     fill_adj_matrix();
 }

@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include "Config.h"
+#include "Control.h"
 
 using namespace std;
 
@@ -43,15 +43,9 @@ int main(int argc, char** argv){
         return -1;
     }
 
-    //get the instance name
-    string instance_name = argv[1];
-
-    Config config = Config(instance_name);
-
-    config.print_distance_matrix();
-    config.print_adj_matrix();
-
-
+    //initialize the control passing the instance name and with decision_epoch_horizon
+    Control control = Control(argv[1], K);
+    control.initiate();
 
     // //creates and read the distance matrix
     // vector<double> distance_matrix;
