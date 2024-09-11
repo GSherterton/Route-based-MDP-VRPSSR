@@ -37,7 +37,7 @@ int main(int argc, char** argv){
     //  {15, 16, 17, 18, 19},
     //  {20, 21, 22, 23, 24}}
 
-    if(argc < 2){
+    if(argc < 2){//at least the instance name is needed
         cout << "Missing parameters!\n";
 
         return -1;
