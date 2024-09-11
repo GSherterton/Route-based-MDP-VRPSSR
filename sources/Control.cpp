@@ -1,56 +1,22 @@
 #include "Control.h"
 
-void Control::add_request(const int& index, const int& time){
-    requests.push_back(make_pair(index, time));
-}
-
 Control::Control(const string& instance_name, const int& decision_epoch_horizon){
     this->instance_name = instance_name;
     this->decision_epoch_horizon = decision_epoch_horizon;
     
-    request_index = 0;
     total_reward = 0;
     
     //initialize the config
     config = Config(instance_name, decision_epoch_horizon);
     //initialize the state
     state = State(config);
-
-    //inicializar os requests manualmente com o index do customer
-    add_request(0, 0);
-    add_request(1, 0);
-    add_request(4, 1);
-    add_request(5, 2);
-    add_request(2, 2);
-    add_request(7, 4);
-    add_request(8, 8);
-    add_request(6, 11);
-    add_request(3, 20);
-
-    //inicializar os requests manualmente com a posicao do customer
-    /*add_request(costumer[0], 0);
-    add_request(costumer[1], 0);
-    add_request(costumer[4], 1);
-    add_request(costumer[5], 2);
-    add_request(costumer[2], 2);
-    add_request(costumer[7], 4);
-    add_request(costumer[8], 8);
-    add_request(costumer[6], 11);
-    add_request(costumer[3], 20);*/
 }
 
-void Control::receive_requests(){
-    for(int i = request_index; i < requests.size(); i++){
-        //if have a request set the customer as requested
-        if(requests[i].second <= state.get_time()){
-            state.set_requested(requests[i].first);
-        }else{
-            //if the time of the request passed the actual time actualize the index of requests
-            request_index = i;
-            return;
-        }
+/*void Control::uptade_status(const vector<int>& new_requests){
+    for(int i = 0; i < new_requests.size(); i++){
+        state.set_requested(new_requests[i]);
     }
-}
+}*/
 
 void Control::action(const int& elapsed_time, const int& new_position){
     state.advance_decision_epoch();
@@ -63,15 +29,20 @@ void Control::action(const int& elapsed_time, const int& new_position){
 void Control::initiate(){
     //iterates above the decision epoch horizon
     for(int i = 0; i < decision_epoch_horizon; i++){
-        receive_requests(); //receive the requests
+        vector<int> new_requests;
+        new_requests = config.receive_requests(state.get_time()); //receive the new requests
+
+        // update_status(new_requests);
+
+        //ver qual desses dois é melhor
+        //requests.emplace_back(new_requests); //aparentemente esse da erro
+        requests.insert(requests.end(), new_requests.begin(), new_requests.end());
 
         vector<int> actual_status = state.get_status();//pega os status atuais
 
         cout << "Actual Requests: [";//debug if the requests are being made right
-        for(int j = 0; j < config.get_customers_size(); j++){
-            if(actual_status[j] == 1){
-                cout << j << " ";
-            }
+        for(int j = 0; j < requests.size(); j++){
+            cout << requests[j] << ((j == requests.size()-1) ? ("") : (" "));
         }cout << "]" << endl;
 
         //take an action

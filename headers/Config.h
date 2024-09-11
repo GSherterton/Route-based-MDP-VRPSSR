@@ -14,12 +14,20 @@ class Config{
         int depot; //stores where the depot is located
         vector<int> customers; //stores the position of each customer
 
+        int request_index;
+        vector<pair<int, int>> requests;//costumer index, time of the request
+        //vector<pair<int, int>> requests;//costumer position, time of the request
+
+        void add_request(const int& index, const int& time);
+        //void add_request(const int& position, const int& time);
+
         void read_instance(const string& instance_name);
         void fill_adj_matrix();
-
     public:
         Config();
         Config(const string& instance_name, const int& decision_epoch_horizon);
+
+        vector<int> receive_requests(const int& time); //returns the new requests
 
         //debug functions
         void print_distance_matrix();
