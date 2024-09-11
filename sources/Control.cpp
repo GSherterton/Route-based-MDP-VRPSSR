@@ -12,14 +12,24 @@ Control::Control(const string& instance_name, const int& decision_epoch_horizon)
     state = State(config);
 }
 
-/*void Control::uptade_status(const vector<int>& new_requests){
+void Control::insert_new_requests(const vector<int>& new_requests){
+    requests.insert(requests.end(), new_requests.begin(), new_requests.end()); //insert the new requests in the total requests
+    // for(int i = 0; i < new_requests.size(); i++){
+    //     requests.push_back(new_requests[i]);
+    // }
+}
+
+//update the status of the new requests received in that decision epoch
+void Control::update_status(const vector<int>& new_requests){
     for(int i = 0; i < new_requests.size(); i++){
         state.set_requested(new_requests[i]);
     }
-}*/
+}
 
 void Control::action(const int& elapsed_time, const int& new_position){
     state.advance_decision_epoch();
+
+
     state.update_position(state.get_position());//the position remains the same
     state.advance_time(elapsed_time);
     //no set request
@@ -32,18 +42,21 @@ void Control::initiate(){
         vector<int> new_requests;
         new_requests = config.receive_requests(state.get_time()); //receive the new requests
 
-        // update_status(new_requests);
+        update_status(new_requests); //update the status of the new requests
 
-        //ver qual desses dois é melhor
-        //requests.emplace_back(new_requests); //aparentemente esse da erro
-        requests.insert(requests.end(), new_requests.begin(), new_requests.end());
-
-        vector<int> actual_status = state.get_status();//pega os status atuais
+        insert_new_requests(new_requests);
 
         cout << "Actual Requests: [";//debug if the requests are being made right
-        for(int j = 0; j < requests.size(); j++){
-            cout << requests[j] << ((j == requests.size()-1) ? ("") : (" "));
+        int j = 0;
+        for(auto it : requests){
+            cout << it << ((j++ == requests.size()-1) ? ("") : (" "));
         }cout << "]" << endl;
+        // for(int j = 0; j < requests.size(); j++){
+        //     cout << requests[j] << ((j == requests.size()-1) ? ("") : (" "));
+        // }cout << "]" << endl;
+
+        
+
 
         //take an action
         //for now will be do nothing just pass the time
