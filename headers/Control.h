@@ -15,14 +15,14 @@ class Control{
 
         //faz mais sentido os requests de control serem apenas os revelados
         list<int> requests;//costumer index
-        //vector<int> requests;//costumer index
-        //vector<int> requests;//costumer position
+        //list<int> requests;//costumer position
 
         int total_reward;
 
         void insert_new_requests(const vector<int>& new_requests);
         void update_status(const vector<int>& new_requests);
-        void action(const int& elapsed_time, const int& new_position);
+        void receive_requests();
+        void action();
     public:
         Control(const string& instance_name, const int& decision_epoch_horizon);
         void initiate();
