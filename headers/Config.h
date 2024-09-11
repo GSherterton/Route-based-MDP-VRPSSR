@@ -18,6 +18,7 @@ class Config{
         void fill_adj_matrix();
 
     public:
+        Config();
         Config(const string& instance_name, const int& decision_epoch_horizon);
 
         //debug functions

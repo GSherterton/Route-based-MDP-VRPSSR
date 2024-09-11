@@ -51,6 +51,8 @@ void Config::fill_adj_matrix(){
     }
 }
 
+Config::Config(){}
+
 Config::Config(const string& instance_name, const int& decision_epoch_horizon){
     read_instance(instance_name);
     fill_adj_matrix();
