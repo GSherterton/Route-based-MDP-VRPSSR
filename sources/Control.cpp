@@ -81,6 +81,12 @@ void Control::action(){
 }
 
 void Control::initiate(){
+    cout << "Decision Epoch: 0\n";
+    cout << "Position: " << config.get_depot() << endl;
+    cout << "Route: -\n";
+    
+    cout << "--------------------------------------------------\n";
+
     //iterates above the decision epoch horizon
     for(int i = 0; i < decision_epoch_horizon; i++){
         //receive the new requests
@@ -92,5 +98,15 @@ void Control::initiate(){
 
         //do the transition
         //the trasition is inside the action()
+        cout << "Decision Epoch: " << i+1 << "\n";
+        cout << "Position: " << state.get_position() << endl;
+        cout << "Route: ";
+
+        vector<int> route = state.get_route_plan();
+        for(int j = 0; j < route.size(); j++){
+            cout << route[j] << " ";
+        }cout << endl;
+
+        cout << "--------------------------------------------------\n";
     }
 }
