@@ -11,3 +11,11 @@ State::State(const Config& config){
     status = vector<int>(config.get_customers_size(), 0); //customer status
     //status = vector<int>(config.get_dimension(), 0); //vertex status
 }
+
+void State::update_state(const int& next_position, const vector<int>& next_route, const int& next_customer, const int& time){
+    advance_decision_epoch();
+    update_position(next_position);
+    update_route(next_route);
+    set_served(next_customer);
+    advance_time(time);
+}

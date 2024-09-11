@@ -37,5 +37,6 @@ class Config{
         inline int get_distance(const int& i, const int& j) const { return distance_matrix[i-1][j-1]; }
         inline int get_dimension() const { return dimension; }
         inline int get_depot() const { return depot; }
+        inline int get_position(const int& customer) const { return customers[customer]; }
         inline int get_customers_size() const { return customers.size(); }
 };
