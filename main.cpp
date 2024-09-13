@@ -1,10 +1,44 @@
 #include <iostream>
 #include <vector>
+#include <fstream>
 #include "Control.h"
+#include "Dijkstra.h"
 
 using namespace std;
 
 static int K = 7; //decision epoch horizon
+
+//so copiei e colei do config e tirei a leitura dos costumers
+vector<vector<double>> read_instance(const string& instance_name){
+    vector<vector<double>> distance_matrix;
+
+    ifstream fp;
+
+    fp.open(instance_name);
+
+    if(!fp.is_open()){
+        cout << "Nao foi possivel abrir o arquivo\n";
+        return vector<vector<double>>();
+    }
+
+    int dimension;
+    fp >> dimension;
+
+    distance_matrix.resize(dimension);
+    for(int i = 0; i < dimension; i++){
+        distance_matrix[i].resize(dimension);
+    }
+    
+    for(int i = 0; i < dimension; i++){
+        for(int j = 0; j < dimension; j++){
+            fp >> distance_matrix[i][j];
+        }
+    }
+    
+    fp.close();
+
+    return distance_matrix;
+}
 
 int main(int argc, char** argv){
     //in the conventional model for VRPSSR
@@ -43,9 +77,24 @@ int main(int argc, char** argv){
         return -1;
     }
 
+    //testing the dijkstra
+    string instance_name = argv[1];
+
+    vector<vector<double>> distance_matrix = read_instance(instance_name);
+
+    Dijkstra dijkstra(distance_matrix);
+
+    int start, end;
+    cin >> start >> end;
+    Route route = dijkstra.shortest_path(start, end); //runs dijsktra passing the start and the end vertex
+    route.print_route();
+    
+
+    /*
     //initialize the control passing the instance name and with decision_epoch_horizon
     Control control = Control(argv[1], K);
     control.initiate();
+    */
 
     // //creates and read the distance matrix
     // vector<double> distance_matrix;
