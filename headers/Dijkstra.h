@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <list>
 #include "Route.h"
 
 #define INFINITY 1000000000
@@ -16,6 +17,6 @@ class Dijkstra{
         Dijkstra();
         Dijkstra(const vector<vector<double>>& distance_matrix);
 
-        void dijkstra_algorithm(const int& start, vector<double>& distance, vector<bool>& visited, vector<int>& penultimates);
+        void dijkstra_algorithm(const int& start, vector<double>& distance, list<int>& unvisited, vector<int>& penultimates);
         Route shortest_path(const int& start, const int& end);
 };

@@ -43,32 +43,37 @@ Dijkstra::Dijkstra(const vector<vector<double>>& distance_matrix){
     fill_adj_matrix(distance_matrix);    
 }
 
-void Dijkstra::dijkstra_algorithm(const int& start, vector<double>& distance, vector<bool>& visited, vector<int>& penultimates){
+void Dijkstra::dijkstra_algorithm(const int& start, vector<double>& distance, list<int>& unvisited, vector<int>& penultimates){
     int n = adj_matrix.size(); //gets the quantity of vertices
 
     //finds the shortest path from the start vertex to all other vertices
     for(int i = 0; i < n; i++){
         int index_aux = -1; //marks the index aux as not changed
 
+        /*
         for(int j = 0; j < n; j++){//pode mudar isso para uma lista de visitados para fazer menos iteracoes
             if(!visited[j] && (index_aux == -1 || distance[j] < distance[index_aux])){
                 index_aux = j;
             }
         }
+        */
 
-        /*//if the unvisited was a list of the vertices not visited
-        for(auto it : unvisited){
-            if(index_aux == -1 || distance[it] < distance[index_aux]){
-                index_aux = it;
+        //if the unvisited was a list of the vertices not visited
+        auto it_index_aux = unvisited.begin();
+        for(auto it = unvisited.begin(); it != unvisited.end(); it++){
+            if(index_aux == -1 || distance[*it] < distance[index_aux]){
+                index_aux = *it; //stores the value of the index aux
+                it_index_aux = it; //stores the position in the list of the index aux
             }
         }
-        */
+
+        unvisited.erase(it_index_aux);  //erases the vertex of the list
 
         if(distance[index_aux] == INFINITY){ //stops if had an isolated vertex
             break;
         }
 
-        visited[index_aux] = true;
+        //visited[index_aux] = true;
 
         for(auto edge : adj_matrix[index_aux]){ //iterates in the adjacent vertices of the actual vertex (index aux)
             double soma = distance[index_aux] + edge.second; //makes the sum of, the actual lower distance from the start
@@ -93,12 +98,16 @@ Route Dijkstra::shortest_path(const int& start, const int& end){
 
     int n = adj_matrix.size();
 
-    vector<bool> visited(n, 0);             //initialize all as false
+    // vector<bool> visited(n, 0);             //initialize all as false
+    list<int> unvisited;
+    for(int i = 0; i < n; i++){
+        unvisited.push_back(i);
+    }
     vector<double> distance(n, INFINITY);   //initialize all as infinity
     distance[start] = 0;                    //changes only the starting vertex to 0
     vector<int> penultimates(n, -1);                 //vector of the penultimates vertex before reach the vertex
 
-    dijkstra_algorithm(start, distance, visited, penultimates); //runs the dijkstra algorithm
+    dijkstra_algorithm(start, distance, unvisited, penultimates); //runs the dijkstra algorithm
 
     route.obj = distance[end]; //the distance to the desired vertex 
     route.path = find_path(penultimates, start, end); //find the path from the start to the end
