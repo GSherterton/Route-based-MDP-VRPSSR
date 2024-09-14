@@ -3,13 +3,14 @@
 #include <fstream>
 #include "Control.h"
 #include "Dijkstra.h"
+#include "A_star.h"
 
 using namespace std;
 
 static int K = 7; //decision epoch horizon
 
 //so copiei e colei do config e tirei a leitura dos costumers
-vector<vector<double>> read_instance(const string& instance_name){
+vector<vector<double>> read_instance(const string& instance_name, vector<double>& x, vector<double>& y){
     vector<vector<double>> distance_matrix;
 
     ifstream fp;
@@ -34,7 +35,13 @@ vector<vector<double>> read_instance(const string& instance_name){
             fp >> distance_matrix[i][j];
         }
     }
-    
+
+    x.resize(dimension);
+    y.resize(dimension);
+    for(int i = 0; i < dimension; i++){
+        fp >> x[i] >> y[i];
+    }
+
     fp.close();
 
     return distance_matrix;
@@ -77,18 +84,27 @@ int main(int argc, char** argv){
         return -1;
     }
 
-    //testing the dijkstra
     string instance_name = argv[1];
 
-    vector<vector<double>> distance_matrix = read_instance(instance_name);
-
-    Dijkstra dijkstra(distance_matrix);
+    vector<double> x;
+    vector<double> y;
+    vector<vector<double>> distance_matrix = read_instance(instance_name, x, y);
 
     int start, end;
     cin >> start >> end;
+
+    /*//testing the dijkstra
+    Dijkstra dijkstra(distance_matrix);
     Route route = dijkstra.shortest_path(start, end); //runs dijsktra passing the start and the end vertex
-    route.print_route();
+    */
     
+    //warning: i changed the instance articleA to have the position of each vertex
+    //testing the A*
+    A_star a_star(distance_matrix, x, y);
+    Route route = a_star.shortest_path(start, end); //runs a_star passing the start and the end vertex
+    
+
+    route.print_route();
 
     /*
     //initialize the control passing the instance name and with decision_epoch_horizon
