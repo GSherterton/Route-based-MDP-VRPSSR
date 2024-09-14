@@ -40,7 +40,7 @@ vector<int> Dijkstra::find_path(const vector<int>& pen, const int& start, int en
 Dijkstra::Dijkstra(){}
 
 Dijkstra::Dijkstra(const vector<vector<double>>& distance_matrix){
-    fill_adj_matrix(distance_matrix);    
+    fill_adj_matrix(distance_matrix);
 }
 
 void Dijkstra::dijkstra_algorithm(const int& start, vector<double>& distance, list<int>& unvisited, vector<int>& penultimates){
@@ -105,11 +105,11 @@ Route Dijkstra::shortest_path(const int& start, const int& end){
     }
     vector<double> distance(n, INFINITY);   //initialize all as infinity
     distance[start] = 0;                    //changes only the starting vertex to 0
-    vector<int> penultimates(n, -1);                 //vector of the penultimates vertex before reach the vertex
+    vector<int> penultimates(n, -1);        //vector of the penultimates vertex before reach the vertex
 
     dijkstra_algorithm(start, distance, unvisited, penultimates); //runs the dijkstra algorithm
 
-    route.obj = distance[end]; //the distance to the desired vertex 
+    route.obj = distance[end]; //the distance to the desired vertex
     route.path = find_path(penultimates, start, end); //find the path from the start to the end
 
     return route;
