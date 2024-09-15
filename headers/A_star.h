@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <list>
 #include "Route.h"
 
 #define INFINITY 1000000000
@@ -21,6 +22,6 @@ class A_star{
         A_star();
         A_star(const vector<vector<double>>& distance_matrix, const vector<double>& x, const vector<double>& y);
 
-        void a_star_algorithm(const int& start, vector<double>& distance, vector<bool>& visited, vector<int>& penultimates);
+        void a_star_algorithm(const int& start, vector<double>& distance, list<int>& unvisited, vector<int>& penultimates);
         Route shortest_path(const int& start, const int& end);
 };
