@@ -1,6 +1,7 @@
 #include "A_star.h"
 #include <math.h>
 
+//it will be the h
 double A_star::euclidean_distance(const int& a, const int& b){
     if(dp_euclidean_distance[a][b] != 0){
         return dp_euclidean_distance[a][b];
@@ -61,23 +62,49 @@ A_star::A_star(const vector<vector<double>>& distance_matrix, const vector<doubl
     fill_adj_matrix(distance_matrix);
 }
 
-void A_star::a_star_algorithm(const int& start, vector<double>& distance, list<int>& unvisited, vector<int>& penultimates){
+//the cell_details is like the distance vector, penultimates vector but with the f and h too
+void A_star::a_star_algorithm(const int& start, const int& end, vector<double>& objective_distance, vector<double>& distance, vector<double>& euclidean, vector<bool>& closed_list, vector<int>& penultimates){
     int n = adj_matrix.size(); //gets the quantity of vertices
 
-    while(!unvisited.empty()){
-        int index_aux = -1; //marks the index aux as not changed
+    set<pair<double, int>> open_list; //double is the f and the int is the index of the vertex
 
-        //if the unvisited was a list of the vertices not visited
-        auto it_index_aux = unvisited.begin();
-        for(auto it = unvisited.begin(); it != unvisited.end(); it++){
-            if(index_aux == -1 || distance[*it] < distance[index_aux]){
-                index_aux = *it; //stores the value of the index aux
-                it_index_aux = it; //stores the position in the list of the index aux
+    open_list.insert(make_pair(0, start)); //insert the start vertex in the open list
+
+    int vertex_index;
+
+    while(!open_list.empty()){
+        pair<double, int> p = *open_list.begin();
+        open_list.erase(open_list.begin());
+
+        vertex_index = p.second;
+        
+        closed_list[vertex_index] = 1;
+
+        double gNew, hNew, fNew;
+
+        pair<int, double> iterated_adj;
+
+        //substituir por um for each
+        for(int i = 0; i < adj_matrix[vertex_index].size(); i++){
+            iterated_adj = adj_matrix[vertex_index][i];
+            if(iterated_adj.first == end){
+                //found the end vertex
+                penultimates[iterated_adj.first] = vertex_index;
+                return;
+            }else if(closed_list[iterated_adj.first] == false){
+                gNew = objective_distance[iterated_adj.first] + iterated_adj.second;
+                hNew = euclidean_distance(iterated_adj.first, end);
+                fNew = gNew + hNew;
             }
         }
 
-        unvisited.erase(it_index_aux);  //erases the vertex of the list
-        
+
+
+
+
+
+        int index_aux = -1; //marks the index aux as not changed
+
         return;
     //-------------------------------------------------------------------------------------------------
         
@@ -111,16 +138,24 @@ Route A_star::shortest_path(const int& start, const int& end){
 
     int n = adj_matrix.size();
 
+    vector<bool> closed_list(n, 0);
+    /*
     list<int> unvisited;
     for(int i = 0; i < n; i++){
         unvisited.push_back(i);
     }
-    vector<double> distance(n, INFINITY);   //initialize all as infinity
+    */
+
+    vector<double> objective_distance(n, INFINITY);     //initialize all as infinity
+    vector<double> distance(n, INFINITY);               //initialize all as infinity
+    vector<double> euclidean(n, INFINITY);              //initialize all as infinity
+    objective_distance[start] = 0;                    //changes only the starting vertex to 0
     distance[start] = 0;                    //changes only the starting vertex to 0
+    euclidean[start] = 0;                    //changes only the starting vertex to 0
     vector<int> penultimates(n, -1);        //vector of the penultimates vertex before reach the vertex
 
 
-    a_star_algorithm(start, distance, unvisited, penultimates); //runs the dijkstra algorithm
+    a_star_algorithm(start, end, objective_distance, distance, euclidean, closed_list, penultimates); //runs the A* algorithm
 
     route.obj = distance[end]; //the distance to the desired vertex 
     route.path = find_path(penultimates, start, end); //find the path from the start to the end
