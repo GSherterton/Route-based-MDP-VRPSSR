@@ -70,59 +70,40 @@ void A_star::a_star_algorithm(const int& start, const int& end, vector<double>& 
 
     open_list.insert(make_pair(0, start)); //insert the start vertex in the open list
 
-    int vertex_index;
+    int index_aux;
 
     while(!open_list.empty()){
         pair<double, int> p = *open_list.begin();
         open_list.erase(open_list.begin());
 
-        vertex_index = p.second;
+        index_aux = p.second;
         
-        closed_list[vertex_index] = 1;
+        closed_list[index_aux] = 1;
 
         double gNew, hNew, fNew;
 
         pair<int, double> iterated_adj;
 
-        //substituir por um for each
-        for(int i = 0; i < adj_matrix[vertex_index].size(); i++){
-            iterated_adj = adj_matrix[vertex_index][i];
-            if(iterated_adj.first == end){
-                //found the end vertex
-                penultimates[iterated_adj.first] = vertex_index;
+        for(auto edge : adj_matrix[index_aux]){
+            if(edge.first == end){ //found the end
+                penultimates[edge.first] = index_aux;
+                distance[edge.first] = distance[index_aux] + edge.second;
                 return;
-            }else if(closed_list[iterated_adj.first] == false){
-                gNew = objective_distance[iterated_adj.first] + iterated_adj.second;
-                hNew = euclidean_distance(iterated_adj.first, end);
+            }else if(closed_list[edge.first] == false){
+                gNew = distance[index_aux] + edge.second;
+                hNew = euclidean_distance(edge.first, end);
                 fNew = gNew + hNew;
-            }
-        }
 
+                if (objective_distance[edge.first] == INFINITY || objective_distance[edge.first] > fNew) {
+                    open_list.insert(make_pair(fNew, edge.first));
 
+                    cout << "Mudando o vertice " << edge.first << endl;
 
-
-
-
-        int index_aux = -1; //marks the index aux as not changed
-
-        return;
-    //-------------------------------------------------------------------------------------------------
-        
-
-        if(distance[index_aux] == INFINITY){ //stops if had an isolated vertex
-            break;
-        }
-
-        //visited[index_aux] = true;
-
-        for(auto edge : adj_matrix[index_aux]){ //iterates in the adjacent vertices of the actual vertex (index aux)
-            double soma = distance[index_aux] + edge.second; //makes the sum of, the actual lower distance from the start
-                                                             //to the index aux, with the distance of theindex aux to the
-                                                             //iterated vertex
-
-            if(distance[edge.first] > soma){ //verifies if this sum if lower than the actual lowest distance from this vertex to the iterated
-                distance[edge.first] = soma; //if true updates this lowest distance
-                penultimates[edge.first] = index_aux; //saves the new penultimate vertex
+                    objective_distance[edge.first] = fNew;
+                    distance[edge.first] = gNew;
+                    euclidean[edge.first] = hNew;
+                    penultimates[edge.first] = index_aux;
+                }
             }
         }
     }
