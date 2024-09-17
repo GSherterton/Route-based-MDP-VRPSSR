@@ -5,7 +5,7 @@
 double A_star::euclidean_distance(const int& a, const int& b){
     if(dp_euclidean_distance[a][b] != 0){
         return dp_euclidean_distance[a][b];
-    }else{
+    }else{//maybe we could not use the square root because we dont really use this value just to compare, and the [sqrt(a) < sqrt(b) ==> a < b]
         return dp_euclidean_distance[a][b] = sqrt(pow(x[a] - x[b], 2) + pow(y[a] - y[b], 2));
     }
 }
@@ -68,7 +68,9 @@ void A_star::a_star_algorithm(const int& start, const int& end, vector<double>& 
 
     set<pair<double, int>> open_list; //double is the f and the int is the index of the vertex
 
-    open_list.insert(make_pair(0, start)); //insert the start vertex in the open list
+    open_list.insert(make_pair(euclidean_distance(start, end), start)); //insert the start vertex in the open list, the objective
+                                                                        //distance of it is just the euclidean distance, because
+                                                                        //the distance of its path is 0    
 
     int index_aux;
 
@@ -82,8 +84,6 @@ void A_star::a_star_algorithm(const int& start, const int& end, vector<double>& 
 
         double gNew, hNew, fNew;
 
-        pair<int, double> iterated_adj;
-
         for(auto edge : adj_matrix[index_aux]){
             if(edge.first == end){ //found the end
                 penultimates[edge.first] = index_aux;
@@ -96,6 +96,10 @@ void A_star::a_star_algorithm(const int& start, const int& end, vector<double>& 
 
                 if (objective_distance[edge.first] == INFINITY || objective_distance[edge.first] > fNew) {
                     open_list.insert(make_pair(fNew, edge.first));
+
+                    for(auto it : open_list){
+                        cout << it.second << ", ";
+                    }cout << endl;
 
                     cout << "Mudando o vertice " << edge.first << endl;
 
