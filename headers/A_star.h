@@ -2,6 +2,7 @@
 #include <vector>
 #include <list>
 #include <set>
+#include <queue>
 #include "Route.h"
 
 #define INFINITY 1000000000

@@ -66,51 +66,50 @@ A_star::A_star(const vector<vector<double>>& distance_matrix, const vector<doubl
 void A_star::a_star_algorithm(const int& start, const int& end, vector<double>& objective_distance, vector<double>& distance, vector<double>& euclidean, vector<bool>& closed_list, vector<int>& penultimates){
     int n = adj_matrix.size(); //gets the quantity of vertices
 
-    set<pair<double, int>> open_list; //double is the f and the int is the index of the vertex
+    priority_queue<pair<double, int>, vector<pair<double, int>>, greater<pair<double, int>>> open_list; //double is the f and the int is the index of the vertex
 
-    open_list.insert(make_pair(euclidean_distance(start, end), start)); //insert the start vertex in the open list, the objective
+    open_list.push(make_pair(euclidean_distance(start, end), start)); //insert the start vertex in the open list, the objective
                                                                         //distance of it is just the euclidean distance, because
-                                                                        //the distance of its path is 0    
+                                                                        //the distance of its path is 0
 
     int index_aux;
 
     while(!open_list.empty()){
-        pair<double, int> p = *open_list.begin();
-        open_list.erase(open_list.begin());
+        pair<double, int> p = open_list.top(); //the actual vertex with the lowest value of f
+        open_list.pop(); //excludes this vertex from the open list
 
-        index_aux = p.second;
+        index_aux = p.second; //takes index of this vertex
         
-        closed_list[index_aux] = 1;
+        closed_list[index_aux] = 1; //adds this vertex to the closed list
 
-        double gNew, hNew, fNew;
+        double gNew, hNew, fNew; //aux vars to the calculations
 
-        for(auto edge : adj_matrix[index_aux]){
+        for(auto edge : adj_matrix[index_aux]){ //edge .first = vertex connected | .second = edge weight
             if(edge.first == end){ //found the end
-                penultimates[edge.first] = index_aux;
-                distance[edge.first] = distance[index_aux] + edge.second;
+                penultimates[edge.first] = index_aux; //update the end vertex penultimate to the iterated vertex
+                distance[edge.first] = distance[index_aux] + edge.second; //update the distance of the end vertex
                 return;
-            }else if(closed_list[edge.first] == false){
-                gNew = distance[index_aux] + edge.second;
+            }else if(closed_list[edge.first] == false){ //if the vertex aren't in the closed list
+                //calculates the new g, h and f associated to this adj vertex
+                gNew = distance[index_aux] + edge.second; 
                 hNew = euclidean_distance(edge.first, end);
                 fNew = gNew + hNew;
 
-                if (objective_distance[edge.first] == INFINITY || objective_distance[edge.first] > fNew) {
-                    open_list.insert(make_pair(fNew, edge.first));
+                //if the new f calculated is lower than the f of the adj vertex
+                if(fNew < objective_distance[edge.first]){// || objective_distance[edge.first] == INFINITY){
+                    open_list.push(make_pair(fNew, edge.first));
 
-                    for(auto it : open_list){
-                        cout << it.second << ", ";
-                    }cout << endl;
-
-                    cout << "Mudando o vertice " << edge.first << endl;
-
-                    objective_distance[edge.first] = fNew;
                     distance[edge.first] = gNew;
                     euclidean[edge.first] = hNew;
+                    objective_distance[edge.first] = fNew;
                     penultimates[edge.first] = index_aux;
                 }
             }
         }
     }
+
+    cout << "Nao conseguiu achar um caminho!\n";
+    return;
 }
 
 Route A_star::shortest_path(const int& start, const int& end){
@@ -123,22 +122,15 @@ Route A_star::shortest_path(const int& start, const int& end){
 
     int n = adj_matrix.size();
 
-    vector<bool> closed_list(n, 0);
-    /*
-    list<int> unvisited;
-    for(int i = 0; i < n; i++){
-        unvisited.push_back(i);
-    }
-    */
+    vector<bool> closed_list(n, 0); //list of vertex not iterated
 
     vector<double> objective_distance(n, INFINITY);     //initialize all as infinity
     vector<double> distance(n, INFINITY);               //initialize all as infinity
     vector<double> euclidean(n, INFINITY);              //initialize all as infinity
-    objective_distance[start] = 0;                    //changes only the starting vertex to 0
-    distance[start] = 0;                    //changes only the starting vertex to 0
-    euclidean[start] = 0;                    //changes only the starting vertex to 0
+    distance[start] = 0;                                //changes only the starting vertex to 0
+    euclidean[start] = euclidean_distance(start, end);  //changes only the starting vertex to the euclidean distance
+    objective_distance[start] = euclidean[start];       //changes only the starting vertex to the euclidean distance + distance to start (0)
     vector<int> penultimates(n, -1);        //vector of the penultimates vertex before reach the vertex
-
 
     a_star_algorithm(start, end, objective_distance, distance, euclidean, closed_list, penultimates); //runs the A* algorithm
 
