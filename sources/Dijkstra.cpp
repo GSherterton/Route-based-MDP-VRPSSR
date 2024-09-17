@@ -81,7 +81,7 @@ void Dijkstra::dijkstra_algorithm(const int& start, vector<double>& distance, li
                                                              //iterated vertex
 
             if(distance[edge.first] > soma){ //verifies if this sum if lower than the actual lowest distance from this vertex to the iterated
-                cout << "Mudando o vertice " << edge.first << endl;
+                //cout << "Mudando o vertice " << edge.first << endl;
                 distance[edge.first] = soma; //if true updates this lowest distance
                 penultimates[edge.first] = index_aux; //saves the new penultimate vertex
             }
