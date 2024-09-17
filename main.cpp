@@ -123,6 +123,7 @@ int main(int argc, char** argv){
     vector<vector<double>> distance_matrix = read_instance(instance_name, x, y);
     Route route;
 
+    //maybe the b.txt be a bad instance, I need to generate a good and real instance
     while(1){
         int start, end;
         cin >> start >> end;
