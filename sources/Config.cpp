@@ -115,9 +115,15 @@ void Config::print_distance_matrix(){
 void Config::print_adj_matrix(){
     for(int i = 0; i < dimension; i++){
         cout << "Vertex [" << i << "]: ";
-        for(int j = 0; j < adj_matrix[i].size(); j++){
-            cout << "(" << adj_matrix[i][j].first << ", " << adj_matrix[i][j].second << ")";
-            cout << ((j == (adj_matrix[i].size() - 1)) ? ("\n") : (", "));
+
+        if(adj_matrix[i].size() == 0){
+            cout << "-";
+        }else{
+            for(int j = 0; j < adj_matrix[i].size(); j++){
+                cout << "(" << adj_matrix[i][j].first << ", " << adj_matrix[i][j].second << ") ";
+            }
         }
+
+        cout << endl;        
     }
 }
